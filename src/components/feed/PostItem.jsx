@@ -14,6 +14,7 @@ import moreIcon from "../../assets/images/icon_more_vertical_mini.svg";
 import defaultProfileIcon from "../../assets/images/user_profile.svg";
 import styles from "../feed/PostFeed.module.scss";
 import HeartComponent from "../heart/HeartComponent";
+import commentsIcon from "../../assets/images/icon_chat.svg";
 
 // 날짜 포맷팅 함수
 const formatDate = (dateString) => {
@@ -24,7 +25,7 @@ const formatDate = (dateString) => {
   return `${year}년 ${month}월 ${day}일`;
 };
 
-const PostItem = ({ post, selectedPost, setSelectedPost }) => {
+const PostItem = ({ post, selectedPost, setSelectedPost, commentCount }) => {
   const location = useLocation();
   const path = location.pathname;
 
@@ -115,56 +116,64 @@ const PostItem = ({ post, selectedPost, setSelectedPost }) => {
       : post.author.image;
 
   return (
-    <div className={styles.feedItem}>
-      <img
-        className={styles.profileImg}
-        src={profileImageSrc}
-        alt={`${post.author.username}의 프로필사진`}
-      />
-      <div className={styles.postContent}>
-        <div className={styles.author}>
-          <div>
-            <h3 className={styles.username}>{post.author.username}</h3>
-            <p className={styles.accountname}>@{post.author.accountname}</p>
-          </div>
-          <button
-            className={styles.openModal}
-            onClick={handleOpenOptionsModal}
-            aria-label="옵션 열기"
-          >
-            <img src={moreIcon} alt="더보기" />
-          </button>
-        </div>
-        <Link to={`/detail/${post.id}`}>
-          <p className={styles.textContent}>{post.content}</p>
-          {imageArray.length > 0 &&
-            imageArray.map((image, index) => (
-              <img
-                key={index}
-                src={
-                  image.startsWith("http")
-                    ? image
-                    : `${import.meta.env.VITE_API_URL}/${image}`
-                }
-                alt={`게시물 이미지 ${index + 1}`}
-                className={styles.images}
-              />
-            ))}
-        </Link>
-        <HeartComponent
-          hearts={post.heartCount}
-          postId={post.id}
-          hearted={post.hearted}
+    <>
+      <div className={styles.feedItem}>
+        <img
+          className={styles.profileImg}
+          src={profileImageSrc}
+          alt={`${post.author.username}의 프로필사진`}
         />
-        <p className={styles.date}>{formatDate(post.createdAt)}</p>
+        <div className={styles.postContent}>
+          <div className={styles.author}>
+            <div>
+              <h3 className={styles.username}>{post.author.username}</h3>
+              <p className={styles.accountname}>@{post.author.accountname}</p>
+            </div>
+            <button
+              className={styles.openModal}
+              onClick={handleOpenOptionsModal}
+              aria-label="옵션 열기"
+            >
+              <img src={moreIcon} alt="더보기" />
+            </button>
+          </div>
+          <Link to={`/detail/${post.id}`}>
+            <p className={styles.textContent}>{post.content}</p>
+            {imageArray.length > 0 &&
+              imageArray.map((image, index) => (
+                <img
+                  key={index}
+                  src={
+                    image.startsWith("http")
+                      ? image
+                      : `${import.meta.env.VITE_API_URL}/${image}`
+                  }
+                  alt={`게시물 이미지 ${index + 1}`}
+                  className={styles.images}
+                />
+              ))}
+          </Link>
+          <div>
+            <HeartComponent
+              hearts={post.heartCount}
+              postId={post.id}
+              hearted={post.hearted}
+            />
+            <Link to={`/detail/${post.id}`}>
+              <img src={commentsIcon} alt="댓글 수" />
+              {post.comments.length}
+            </Link>
+          </div>
+          <p className={styles.date}>{formatDate(post.createdAt)}</p>
+        </div>
+        {(path.includes("detail") || selectedPost === post.id) && (
+          <>
+            <OptionsModal actionHandlers={actionHandlersOptions} />
+            <ConfirmModal actionHandlers={actionHandlersConfirm} />
+          </>
+        )}
       </div>
-      {(path.includes("detail") || selectedPost === post.id) && (
-        <>
-          <OptionsModal actionHandlers={actionHandlersOptions} />
-          <ConfirmModal actionHandlers={actionHandlersConfirm} />
-        </>
-      )}
-    </div>
+    </>
   );
 };
 
