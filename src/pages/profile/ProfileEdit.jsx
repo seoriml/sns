@@ -70,13 +70,13 @@ const ProfileEdit = () => {
     }
   };
 
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setProfileImage(reader.result); // 업로드한 이미지 미리보기 설정
-    };
-    if (file) {
+  const handleImageChange = (files) => {
+    if (files && files[0]) {
+      const file = files[0];
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setProfileImage(e.target.result); // 업로드한 이미지 미리보기 설정
+      };
       reader.readAsDataURL(file); // 파일을 읽어와서 데이터 URL로 변환
     }
   };
@@ -111,7 +111,6 @@ const ProfileEdit = () => {
 
   return (
     <form onSubmit={handleSubmit}>
-      {/* 상단 바 - 백 버튼, 저장 버튼 */}
       <div>
         <BackButton />
         <ButtonComponent

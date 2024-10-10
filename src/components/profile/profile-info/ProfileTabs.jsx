@@ -12,16 +12,21 @@ const ProfileTabs = ({ accountname }) => {
   const [isListView, setIsListView] = useState(true); // 기본값: 리스트 뷰
   const [posts, setPosts] = useState([]);
   const { get } = useAPI();
+  const [limit] = useState(10); // 페이지당 게시물 수
+  const [skip, setSkip] = useState(0); // 시작 위치 초기값
 
   // 데이터 가져오기
   const fetchPosts = async () => {
     const token = localStorage.getItem("userToken");
     const response = await get(
-      `${import.meta.env.VITE_API_URL}/post/${accountname}/userpost`,
+      `${
+        import.meta.env.VITE_API_URL
+      }/post/${accountname}/userpost?limit=${limit}&skip=${skip}`,
       "application/json",
       token
     );
-    setPosts(response.payload.posts); // 받아온 게시물 데이터 설정
+
+    setPosts(response.payload.post); // 받아온 게시물 데이터 설정
   };
 
   // 컴포넌트가 처음 렌더링될 때 데이터 가져오기
@@ -30,6 +35,7 @@ const ProfileTabs = ({ accountname }) => {
       fetchPosts();
     }
   }, [accountname]);
+
   // 리스트 뷰와 그리드 뷰 간 전환
   const tabView = (view) => {
     setIsListView(view);

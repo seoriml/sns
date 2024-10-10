@@ -1,6 +1,5 @@
 import React from "react";
 import iconImageLayers from "../../../assets/images/icon_image_layers.svg";
-import EmptyFeed from "../../feed/EmptyFeed";
 import { useNavigate } from "react-router-dom";
 
 const PostGrid = ({ posts }) => {
@@ -12,9 +11,12 @@ const PostGrid = ({ posts }) => {
         gridTemplateColumns: "repeat(3, 1fr)",
         gap: "10px",
         padding: "20px",
+        backgroundColor: posts.length === 0 ? "#efefef" : "transparent",
+        // minHeight: "100vh",
+        // width: "100%",
       }}
     >
-      {posts.length > 0 ? (
+      {posts.length > 0 &&
         posts
           .filter((post) => post.image)
           .map((post) => {
@@ -49,10 +51,7 @@ const PostGrid = ({ posts }) => {
                 )}
               </div>
             );
-          })
-      ) : (
-        <EmptyFeed />
-      )}
+          })}
     </div>
   );
 };
